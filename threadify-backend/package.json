@@ -1,0 +1,37 @@
+{
+  "name": "threadify-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --exec ts-node -r tsconfig-paths/register src/server.ts",
+    "build": "tsc",
+    "start": "node -r module-alias/register dist/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "module-alias": "^2.2.3",
+    "nodemon": "^3.1.7"
+  },
+  "_moduleAliases": {
+    "@controllers": "dist/controllers",
+    "@models": "dist/model",
+    "@routes": "dist/routes",
+    "@services": "dist/service",
+    "@types": "dist/types",
+    "@interfaces": "dist/interfaces",
+    "@config": "dist/config",
+    "@middleware": "dist/middleware"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^6.1.1",
+    "@types/express": "^5.0.0",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0"
+  }
+}

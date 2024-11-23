@@ -9,13 +9,12 @@
       "baseUrl": "./src",
       "paths": {
         "@controllers/*": ["controllers/*"],
-        "@models/*": ["model/*"],
         "@routes/*": ["routes/*"],
         "@services/*": ["service/*"],
         "@types/*": ["types/*"],
         "@interfaces/*": ["interfaces/*"],
         "@config/*": ["config/*"],
-        "@middleware/*": ["middleware/*"],
+        "@middleware/*": ["middleware/*"]
       }
     },
     "include": ["src/**/*.ts"],

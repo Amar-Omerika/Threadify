@@ -2,7 +2,7 @@ import { BaseService } from '@interfaces/Interface';
 import { Request, Response } from 'express';
 
 export class BaseController<T, S extends BaseService<T>> {
-  constructor(private service: S) {}
+  constructor(protected service: S) {}
 
   async getAll(req: Request, res: Response): Promise<void> {
     try {

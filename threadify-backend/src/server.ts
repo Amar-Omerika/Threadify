@@ -6,10 +6,13 @@ import userRoutes from '@routes/userRoutes';
 dotenv.config();
 const app = express();
 
+app.use(express.json());
+
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 app.use('/users', userRoutes);
+
 app.listen(4000, () => {
   console.log('Server started on port 4000');
 });

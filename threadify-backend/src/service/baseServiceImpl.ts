@@ -4,7 +4,7 @@ import { BaseService } from '@interfaces/Interface';
 export class BaseServiceImpl<T> implements BaseService<T> {
   constructor(
     public prisma: PrismaClient,
-    private model: any,
+    protected model: any,
   ) {}
 
   async getAll(): Promise<T[]> {

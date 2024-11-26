@@ -12,6 +12,7 @@ export interface User {
   createdAt: Date;
   updatedAt: Date;
 }
+
 class UserController extends BaseController<User, typeof UserService> {
   constructor() {
     super(UserService);

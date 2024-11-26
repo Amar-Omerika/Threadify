@@ -4,6 +4,7 @@ import { authMiddleware } from '@middleware/authMiddleware';
 
 const router = Router();
 
+router.get('/hot', topicController.getHotTopics.bind(topicController));
 router.get('/', topicController.getTopics.bind(topicController));
 router.get('/:id', topicController.getOne.bind(topicController));
 router.post('/', authMiddleware, topicController.create.bind(topicController));

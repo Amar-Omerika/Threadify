@@ -71,6 +71,15 @@ class TopicController extends BaseController<Topic, typeof TopicService> {
       res.status(500).json({ error: error.message });
     }
   }
+
+  async getHotTopics(req: Request, res: Response): Promise<void> {
+    try {
+      const topics = await this.service.getHotTopics();
+      res.status(200).json(topics);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 }
 
 export default new TopicController();

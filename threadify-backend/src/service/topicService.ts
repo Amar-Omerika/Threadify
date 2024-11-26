@@ -1,28 +1,22 @@
 import { PrismaClient, Topic as PrismaTopic } from '@prisma/client';
 import { BaseServiceImpl } from './baseServiceImpl';
 
-export interface Topic {
-  id: number;
-  title: string;
-  description: string;
-  createdAt: Date;
-  updatedAt: Date;
-  authorId: number;
-}
-
-class TopicService extends BaseServiceImpl<Topic> {
+class TopicService extends BaseServiceImpl<PrismaTopic> {
   constructor() {
     super(new PrismaClient(), new PrismaClient().topic);
   }
 
-  async createTopic(data: Partial<Topic>): Promise<Topic> {
+  async createTopic(data: Partial<PrismaTopic>): Promise<PrismaTopic> {
     const newTopic = await this.model.create({
       data,
     });
     return newTopic;
   }
 
-  async updateTopic(id: number, data: Partial<Topic>): Promise<Topic | null> {
+  async updateTopic(
+    id: number,
+    data: Partial<PrismaTopic>,
+  ): Promise<PrismaTopic | null> {
     const updatedTopic = await this.model.update({
       where: { id },
       data,
@@ -30,7 +24,7 @@ class TopicService extends BaseServiceImpl<Topic> {
     return updatedTopic;
   }
 
-  async deleteTopic(id: number): Promise<Topic | null> {
+  async deleteTopic(id: number): Promise<PrismaTopic | null> {
     const deletedTopic = await this.model.delete({
       where: { id },
     });
@@ -45,6 +39,22 @@ class TopicService extends BaseServiceImpl<Topic> {
       orderBy: {
         createdAt: 'desc',
       },
+    });
+    return topics;
+  }
+  async getHotTopics(): Promise<PrismaTopic[]> {
+    const topics = await this.model.findMany({
+      include: {
+        _count: {
+          select: { likes: true },
+        },
+      },
+      orderBy: {
+        likes: {
+          _count: 'desc',
+        },
+      },
+      take: 5,
     });
     return topics;
   }

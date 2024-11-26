@@ -36,6 +36,18 @@ class TopicService extends BaseServiceImpl<Topic> {
     });
     return deletedTopic;
   }
+
+  async getTopics(page: number, pageSize: number): Promise<PrismaTopic[]> {
+    const skip = (page - 1) * pageSize;
+    const topics = await this.model.findMany({
+      skip,
+      take: pageSize,
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+    return topics;
+  }
 }
 
 export default new TopicService();

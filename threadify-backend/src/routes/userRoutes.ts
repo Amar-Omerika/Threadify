@@ -4,6 +4,10 @@ import { authMiddleware } from '@middleware/authMiddleware';
 
 const router = Router();
 
+router.get(
+  '/top-commenters',
+  userController.getUsersWithMostComments.bind(userController),
+);
 router.get('/', userController.getAll.bind(userController));
 router.get('/:id', userController.getOne.bind(userController));
 router.post('/', authMiddleware, userController.create.bind(userController));
@@ -14,7 +18,6 @@ router.delete(
   userController.delete.bind(userController),
 );
 
-// Authentication routes
 router.post('/register', userController.register.bind(userController));
 router.post('/login', userController.login.bind(userController));
 

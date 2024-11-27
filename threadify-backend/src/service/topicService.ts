@@ -45,6 +45,12 @@ class TopicService extends BaseServiceImpl<PrismaTopic> {
       },
       include: {
         likes: true,
+        _count: {
+          select: {
+            likes: true,
+            comments: true,
+          },
+        },
       },
     });
 
@@ -60,7 +66,10 @@ class TopicService extends BaseServiceImpl<PrismaTopic> {
     const topics = await this.model.findMany({
       include: {
         _count: {
-          select: { likes: true },
+          select: {
+            likes: true,
+            comments: true,
+          },
         },
         likes: true,
       },

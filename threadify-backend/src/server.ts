@@ -3,6 +3,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import userRoutes from '@routes/userRoutes';
 import topicRoutes from '@routes/topicRoutes';
+import likeRoutes from '@routes/likeRoutes';
 
 dotenv.config();
 const app = express();
@@ -14,6 +15,7 @@ app.get('/', (req, res) => {
 });
 app.use('/users', userRoutes);
 app.use('/topics', topicRoutes);
+app.use('/likes', likeRoutes);
 
 app.listen(4000, () => {
   console.log('Server started on port 4000');

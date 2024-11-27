@@ -1,18 +1,9 @@
+import { PrismaClient, User as PrismaUser } from '@prisma/client';
 import { Request, Response } from 'express';
 import { BaseController } from './baseController';
 import UserService from '@services/userService';
 
-export interface User {
-  id: number;
-  firstName?: string;
-  lastName?: string;
-  email: string;
-  password: string;
-  avatarUrl?: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-class UserController extends BaseController<User, typeof UserService> {
+class UserController extends BaseController<PrismaUser, typeof UserService> {
   constructor() {
     super(UserService);
   }
@@ -33,6 +24,15 @@ class UserController extends BaseController<User, typeof UserService> {
       res.status(200).json({ token });
     } catch (error: any) {
       res.status(401).json({ error: error.message });
+    }
+  }
+
+  async getUsersWithMostComments(req: Request, res: Response): Promise<void> {
+    try {
+      const users = await this.service.getUsersWithMostComments();
+      res.status(200).json(users);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
     }
   }
 }

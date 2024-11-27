@@ -12,7 +12,9 @@ export class BaseServiceImpl<T> implements BaseService<T> {
   }
 
   async getOne(id: number): Promise<T | null> {
-    return this.model.findUnique({ where: { id } });
+    return this.model.findUnique({
+      where: { id },
+    });
   }
 
   async create(data: Partial<T>): Promise<T> {
@@ -20,10 +22,15 @@ export class BaseServiceImpl<T> implements BaseService<T> {
   }
 
   async update(id: number, data: Partial<T>): Promise<T | null> {
-    return this.model.update({ where: { id }, data });
+    return this.model.update({
+      where: { id },
+      data,
+    });
   }
 
   async delete(id: number): Promise<T | null> {
-    return this.model.delete({ where: { id } });
+    return this.model.delete({
+      where: { id },
+    });
   }
 }

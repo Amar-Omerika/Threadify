@@ -8,3 +8,21 @@ export interface BaseService<T> {
   update(id: number, data: Partial<T>): Promise<T | null>;
   delete(id: number): Promise<T | null>;
 }
+export interface Topic {
+  id: number;
+  title: string;
+  description: string;
+  createdAt: Date;
+  updatedAt: Date;
+  authorId: number;
+}
+export interface User {
+  id: number;
+  firstName?: string;
+  lastName?: string;
+  email: string;
+  password: string;
+  avatarUrl?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

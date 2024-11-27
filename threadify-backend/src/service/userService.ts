@@ -1,24 +1,14 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, User as PrismaUser } from '@prisma/client';
 import { BaseServiceImpl } from './baseServiceImpl';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-export interface User {
-  id: number;
-  firstName?: string;
-  lastName?: string;
-  email: string;
-  password: string;
-  avatarUrl?: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
 
-class UserService extends BaseServiceImpl<User> {
+class UserService extends BaseServiceImpl<PrismaUser> {
   constructor() {
     super(new PrismaClient(), new PrismaClient().user);
   }
 
-  async register(data: Partial<User>): Promise<User> {
+  async register(data: Partial<PrismaUser>): Promise<PrismaUser> {
     const hashedPassword = await bcrypt.hash(data.password!, 10);
     const newUser = await this.model.create({
       data: {
@@ -41,10 +31,26 @@ class UserService extends BaseServiceImpl<User> {
     }
 
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
-      expiresIn: '1h',
+      expiresIn: '5h',
     });
 
     return token;
+  }
+  async getUsersWithMostComments(): Promise<PrismaUser[]> {
+    const users = await this.prisma.user.findMany({
+      include: {
+        _count: {
+          select: { comments: true },
+        },
+      },
+      orderBy: {
+        comments: {
+          _count: 'desc',
+        },
+      },
+      take: 10,
+    });
+    return users;
   }
 }
 

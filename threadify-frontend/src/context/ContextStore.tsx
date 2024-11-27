@@ -5,7 +5,7 @@ import React, {
   useState,
   useEffect,
 } from 'react';
-import apiClient from '@api/apiClient';
+import apiClient from '../api/apiClient';
 
 interface StateContextProps {
   token: string;

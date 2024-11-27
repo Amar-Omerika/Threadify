@@ -11,7 +11,7 @@
 // export default apiClient;
 
 import axios from 'axios';
-import { useStateContext } from '@context/ContextStore';
+import { useStateContext } from '../context/ContextStore';
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,

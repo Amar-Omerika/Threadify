@@ -22,15 +22,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
 
-    /* Absolute imports */
-    "baseUrl": "./src",
-    "paths": {
-      "@api/*": ["api/*"],
-      "@assets/*": ["assets/*"],
-      "@components/*": ["components/*"],
-      "@context/*": ["context/*"],
-      "@pages/*": ["pages/*"]
-    }
   },
   "include": ["src"]
 }

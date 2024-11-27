@@ -65,7 +65,8 @@ class TopicController extends BaseController<Topic, typeof TopicService> {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const pageSize = parseInt(req.query.pageSize as string) || 20;
-      const topics = await this.service.getTopics(page, pageSize);
+      const userId = (req as any).userId;
+      const topics = await this.service.getTopics(page, pageSize, userId);
       res.status(200).json(topics);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -74,16 +75,20 @@ class TopicController extends BaseController<Topic, typeof TopicService> {
 
   async getHotTopics(req: Request, res: Response): Promise<void> {
     try {
-      const topics = await this.service.getHotTopics();
+      const userId = (req as any).userId;
+      const topics = await this.service.getHotTopics(userId);
       res.status(200).json(topics);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
   }
+
   async getOne(req: Request, res: Response): Promise<void> {
     try {
+      const userId = (req as any).userId;
       const topic = await this.service.getTopicWithComments(
         Number(req.params.id),
+        userId,
       );
       if (!topic) {
         res.status(404).json({ message: 'Topic not found' });

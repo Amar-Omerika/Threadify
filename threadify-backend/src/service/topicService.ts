@@ -31,7 +31,11 @@ class TopicService extends BaseServiceImpl<PrismaTopic> {
     return deletedTopic;
   }
 
-  async getTopics(page: number, pageSize: number): Promise<PrismaTopic[]> {
+  async getTopics(
+    page: number,
+    pageSize: number,
+    userId: number,
+  ): Promise<any[]> {
     const skip = (page - 1) * pageSize;
     const topics = await this.model.findMany({
       skip,
@@ -39,15 +43,26 @@ class TopicService extends BaseServiceImpl<PrismaTopic> {
       orderBy: {
         createdAt: 'desc',
       },
+      include: {
+        likes: true,
+      },
     });
-    return topics;
+
+    // Check if the user has liked each topic
+    const topicsWithUserLikeStatus = topics.map((topic: any) => ({
+      ...topic,
+      isLikedByUser: topic.likes.some((like: any) => like.userId === userId),
+    }));
+
+    return topicsWithUserLikeStatus;
   }
-  async getHotTopics(): Promise<PrismaTopic[]> {
+  async getHotTopics(userId: number): Promise<any[]> {
     const topics = await this.model.findMany({
       include: {
         _count: {
           select: { likes: true },
         },
+        likes: true,
       },
       orderBy: {
         likes: {
@@ -56,9 +71,16 @@ class TopicService extends BaseServiceImpl<PrismaTopic> {
       },
       take: 5,
     });
-    return topics;
+
+    const topicsWithUserLikeStatus = topics.map((topic: any) => ({
+      ...topic,
+      isLikedByUser: topic.likes.some((like: any) => like.userId === userId),
+    }));
+
+    return topicsWithUserLikeStatus;
   }
-  async getTopicWithComments(id: number): Promise<PrismaTopic | null> {
+
+  async getTopicWithComments(id: number, userId: number): Promise<any | null> {
     const topic = await this.model.findUnique({
       where: { id },
       include: {
@@ -67,6 +89,7 @@ class TopicService extends BaseServiceImpl<PrismaTopic> {
             _count: {
               select: { likes: true },
             },
+            likes: true,
           },
           orderBy: {
             likes: {
@@ -74,8 +97,23 @@ class TopicService extends BaseServiceImpl<PrismaTopic> {
             },
           },
         },
+        likes: true,
       },
     });
+
+    if (topic) {
+      return {
+        ...topic,
+        isLikedByUser: topic.likes.some((like: any) => like.userId === userId),
+        comments: topic.comments.map((comment: any) => ({
+          ...comment,
+          isLikedByUser: comment.likes.some(
+            (like: any) => like.userId === userId,
+          ),
+        })),
+      };
+    }
+
     return topic;
   }
 }

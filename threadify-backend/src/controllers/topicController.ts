@@ -80,6 +80,20 @@ class TopicController extends BaseController<Topic, typeof TopicService> {
       res.status(500).json({ error: error.message });
     }
   }
+  async getOne(req: Request, res: Response): Promise<void> {
+    try {
+      const topic = await this.service.getTopicWithComments(
+        Number(req.params.id),
+      );
+      if (!topic) {
+        res.status(404).json({ message: 'Topic not found' });
+      } else {
+        res.status(200).json(topic);
+      }
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 }
 
 export default new TopicController();

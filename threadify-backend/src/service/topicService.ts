@@ -58,6 +58,26 @@ class TopicService extends BaseServiceImpl<PrismaTopic> {
     });
     return topics;
   }
+  async getTopicWithComments(id: number): Promise<PrismaTopic | null> {
+    const topic = await this.model.findUnique({
+      where: { id },
+      include: {
+        comments: {
+          include: {
+            _count: {
+              select: { likes: true },
+            },
+          },
+          orderBy: {
+            likes: {
+              _count: 'desc',
+            },
+          },
+        },
+      },
+    });
+    return topic;
+  }
 }
 
 export default new TopicService();

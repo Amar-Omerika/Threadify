@@ -3,10 +3,13 @@ import { motion } from 'framer-motion';
 import { validateEmail } from '../helpers/validators';
 import { Link } from 'react-router-dom';
 
-const Login = () => {
-  const [loginInfo, setLoginInfo] = useState({
+const Register = () => {
+  const [registerInfo, setRegisterInfo] = useState({
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
+    avatarUrl: '',
   });
   const [errors, setErrors] = useState({
     email: '',
@@ -16,7 +19,7 @@ const Login = () => {
   // Generic handler for form fields
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setLoginInfo((prevState) => ({
+    setRegisterInfo((prevState) => ({
       ...prevState,
       [name]: value,
     }));
@@ -27,7 +30,7 @@ const Login = () => {
   };
 
   const handleSubmit = () => {
-    const { email, password } = loginInfo;
+    const { email, password } = registerInfo;
     let valid = true;
     const newErrors = { email: '', password: '' };
 
@@ -47,7 +50,16 @@ const Login = () => {
     setErrors(newErrors);
 
     if (valid) {
-      console.log('Login Info:', loginInfo);
+      // Use a free API to set a user profile image
+      const avatarUrl = `https://api.multiavatar.com/${encodeURIComponent(
+        email,
+      )}.svg`;
+      setRegisterInfo((prevState) => ({
+        ...prevState,
+        avatarUrl: avatarUrl,
+      }));
+
+      console.log('Register Info:', registerInfo);
       // Perform validation or API request here
     }
   };
@@ -68,13 +80,47 @@ const Login = () => {
           </div>
           <div className="text-center">
             <h1 className="my-3 text-3xl font-semibold text-gray-700 dark:text-gray-200">
-              Sign in
+              Sign Up
             </h1>
             <p className="text-gray-500 dark:text-gray-400">
-              Sign in to access your account
+              Create your account
             </p>
           </div>
           <div className="m-7">
+            <div className="mb-6">
+              <label
+                htmlFor="firstName"
+                className="block mb-2 text-sm text-gray-600 dark:text-gray-400"
+              >
+                First Name
+              </label>
+              <input
+                type="text"
+                name="firstName"
+                id="firstName"
+                value={registerInfo.firstName}
+                onChange={handleChange}
+                placeholder="First Name"
+                className="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-indigo-100 focus:border-indigo-300 dark:bg-gray-700 dark:text-white dark:placeholder-gray-500 dark:border-gray-600 dark:focus:ring-gray-900 dark:focus:border-gray-500"
+              />
+            </div>
+            <div className="mb-6">
+              <label
+                htmlFor="lastName"
+                className="block mb-2 text-sm text-gray-600 dark:text-gray-400"
+              >
+                Last Name
+              </label>
+              <input
+                type="text"
+                name="lastName"
+                id="lastName"
+                value={registerInfo.lastName}
+                onChange={handleChange}
+                placeholder="Last Name"
+                className="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-indigo-100 focus:border-indigo-300 dark:bg-gray-700 dark:text-white dark:placeholder-gray-500 dark:border-gray-600 dark:focus:ring-gray-900 dark:focus:border-gray-500"
+              />
+            </div>
             <div className="mb-6">
               <label
                 htmlFor="email"
@@ -86,7 +132,7 @@ const Login = () => {
                 type="email"
                 name="email"
                 id="email"
-                value={loginInfo.email}
+                value={registerInfo.email}
                 onChange={handleChange}
                 placeholder="you@company.com"
                 className="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-indigo-100 focus:border-indigo-300 dark:bg-gray-700 dark:text-white dark:placeholder-gray-500 dark:border-gray-600 dark:focus:ring-gray-900 dark:focus:border-gray-500"
@@ -114,7 +160,7 @@ const Login = () => {
                 type="password"
                 name="password"
                 id="password"
-                value={loginInfo.password}
+                value={registerInfo.password}
                 onChange={handleChange}
                 placeholder="Your Password"
                 className="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-indigo-100 focus:border-indigo-300 dark:bg-gray-700 dark:text-white dark:placeholder-gray-500 dark:border-gray-600 dark:focus:ring-gray-900 dark:focus:border-gray-500"
@@ -129,13 +175,13 @@ const Login = () => {
                 onClick={handleSubmit}
                 className="w-full px-3 py-4 text-white bg-indigo-500 rounded-md focus:bg-indigo-600 focus:outline-none"
               >
-                Sign in
+                Sign Up
               </button>
             </div>
             <p className="text-sm text-center text-gray-400">
-              Don&#x27;t have an account yet?{' '}
-              <Link to={'/register'} className="text-indigo-400">
-                Sign up
+              Already have an account?{' '}
+              <Link to={'/login'} className="text-indigo-400">
+                Sign in
               </Link>
               .
             </p>
@@ -146,4 +192,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

@@ -9,6 +9,7 @@ import Home from '../pages/Home';
 import Register from '../pages/Register';
 import Layout from '../components/Layout';
 import MyTopics from '../pages/MyTopics';
+import Topic from '../pages/Topic';
 import { useStateContext } from '../context/ContextStore';
 
 /**
@@ -39,6 +40,18 @@ const AppRouter = () => {
               token ? (
                 <Layout>
                   <MyTopics />
+                </Layout>
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/topic/:id"
+            element={
+              token ? (
+                <Layout>
+                  <Topic />
                 </Layout>
               ) : (
                 <Navigate to="/login" />

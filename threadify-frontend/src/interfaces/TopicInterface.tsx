@@ -12,7 +12,21 @@ export interface Like {
 }
 
 export interface Count {
-  comments: number;
+  likes: number;
+}
+
+export interface Comment {
+  id: number;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+  authorId: number;
+  topicId: number;
+  author: Author;
+  _count: Count;
+  likes: Like[];
+  isLikedByUser: boolean;
+  authorName: string;
 }
 
 export interface Topic {
@@ -23,9 +37,8 @@ export interface Topic {
   updatedAt: string;
   authorId: number;
   author: Author;
+  comments: Comment[];
   likes: Like[];
-  _count: Count;
   isLikedByUser: boolean;
-  numberOfComments: number;
   authorName: string;
 }

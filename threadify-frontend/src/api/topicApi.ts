@@ -25,3 +25,23 @@ export const getHotTopics = async (): Promise<Topic[]> => {
     throw error;
   }
 };
+
+export const getOneTopic = async (id: number): Promise<Topic[]> => {
+  try {
+    const response = await apiClient.get(`/topics/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching hot topics:', error);
+    throw error;
+  }
+};
+
+export const likeTopic = async (id?: number) => {
+  try {
+    const response = await apiClient.post(`likes/like-topic`, { id });
+    return response.data;
+  } catch (error) {
+    console.error('Error liking topic', error);
+    throw error;
+  }
+};

@@ -1,4 +1,5 @@
 import { Topic } from '../interfaces/TopicInterface';
+import { Link } from 'react-router-dom';
 
 interface TopicCardProps {
   topic: Topic;
@@ -27,8 +28,8 @@ const TopicCard: React.FC<TopicCardProps> = ({ topic }) => {
         {topic?.description}
       </p>
       <div className="flex flex-row justify-between">
-        <a
-          href="#"
+        <Link
+          to={`/topic/${topic?.id}`}
           className="inline-flex font-medium items-center text-blue-600 hover:underline"
         >
           See details
@@ -47,9 +48,11 @@ const TopicCard: React.FC<TopicCardProps> = ({ topic }) => {
               d="M15 11v4.833A1.166 1.166 0 0 1 13.833 17H2.167A1.167 1.167 0 0 1 1 15.833V4.167A1.166 1.166 0 0 1 2.167 3h4.618m4.447-2H17v5.768M9.111 8.889l7.778-7.778"
             />
           </svg>
-        </a>
+        </Link>
         <div className="flex flex-row">
-          <div className="text-xs font-bold my-auto">Comments: 24</div>
+          <div className="text-xs font-bold my-auto">
+            Comments: {topic?._count.comments}
+          </div>
           <div className="text-xl">👎</div>
           {/* <div className="text-xl">👍</div> */}
         </div>

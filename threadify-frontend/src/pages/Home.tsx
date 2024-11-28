@@ -1,4 +1,4 @@
 const Home = () => {
-  return <div>Home</div>;
+  return <div className="grid grid-cols-3 gap-4">Home</div>;
 };
 export default Home;

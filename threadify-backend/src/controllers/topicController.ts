@@ -1,16 +1,9 @@
+import { PrismaClient, Topic as PrismaTopic } from '@prisma/client';
 import { Request, Response } from 'express';
 import { BaseController } from './baseController';
 import TopicService from '@services/topicService';
-export interface Topic {
-  id: number;
-  title: string;
-  description: string;
-  createdAt: Date;
-  updatedAt: Date;
-  authorId: number;
-}
 
-class TopicController extends BaseController<Topic, typeof TopicService> {
+class TopicController extends BaseController<PrismaTopic, typeof TopicService> {
   constructor() {
     super(TopicService);
   }
@@ -85,7 +78,7 @@ class TopicController extends BaseController<Topic, typeof TopicService> {
 
   async getOne(req: Request, res: Response): Promise<void> {
     try {
-      const userId = (req as any).userId;
+      const userId = (req as any).userId; // Type assertion to access userId
       const topic = await this.service.getTopicWithComments(
         Number(req.params.id),
         userId,

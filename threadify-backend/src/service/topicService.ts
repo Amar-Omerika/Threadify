@@ -44,32 +44,41 @@ class TopicService extends BaseServiceImpl<PrismaTopic> {
         createdAt: 'desc',
       },
       include: {
+        author: {
+          select: {
+            firstName: true,
+            lastName: true,
+          },
+        },
         likes: true,
         _count: {
-          select: {
-            likes: true,
-            comments: true,
-          },
+          select: { comments: true },
         },
       },
     });
 
-    // Check if the user has liked each topic
+    // Check if the user has liked each topic and include the number of comments
     const topicsWithUserLikeStatus = topics.map((topic: any) => ({
       ...topic,
       isLikedByUser: topic.likes.some((like: any) => like.userId === userId),
+      numberOfComments: topic._count.comments,
+      authorName: `${topic.author.firstName} ${topic.author.lastName}`,
     }));
 
     return topicsWithUserLikeStatus;
   }
+
   async getHotTopics(userId: number): Promise<any[]> {
     const topics = await this.model.findMany({
       include: {
-        _count: {
+        author: {
           select: {
-            likes: true,
-            comments: true,
+            firstName: true,
+            lastName: true,
           },
+        },
+        _count: {
+          select: { likes: true, comments: true },
         },
         likes: true,
       },
@@ -84,6 +93,8 @@ class TopicService extends BaseServiceImpl<PrismaTopic> {
     const topicsWithUserLikeStatus = topics.map((topic: any) => ({
       ...topic,
       isLikedByUser: topic.likes.some((like: any) => like.userId === userId),
+      numberOfComments: topic._count.comments,
+      authorName: `${topic.author.firstName} ${topic.author.lastName}`,
     }));
 
     return topicsWithUserLikeStatus;
@@ -93,8 +104,20 @@ class TopicService extends BaseServiceImpl<PrismaTopic> {
     const topic = await this.model.findUnique({
       where: { id },
       include: {
+        author: {
+          select: {
+            firstName: true,
+            lastName: true,
+          },
+        },
         comments: {
           include: {
+            author: {
+              select: {
+                firstName: true,
+                lastName: true,
+              },
+            },
             _count: {
               select: { likes: true },
             },
@@ -114,11 +137,13 @@ class TopicService extends BaseServiceImpl<PrismaTopic> {
       return {
         ...topic,
         isLikedByUser: topic.likes.some((like: any) => like.userId === userId),
+        authorName: `${topic.author.firstName} ${topic.author.lastName}`,
         comments: topic.comments.map((comment: any) => ({
           ...comment,
           isLikedByUser: comment.likes.some(
             (like: any) => like.userId === userId,
           ),
+          authorName: `${comment.author.firstName} ${comment.author.lastName}`,
         })),
       };
     }

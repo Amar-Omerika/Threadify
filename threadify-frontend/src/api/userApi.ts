@@ -18,3 +18,13 @@ export const login = async (email: string, password: string) => {
     throw error;
   }
 };
+
+export const getUsersWithTopComments = async (): Promise<UserInfo[]> => {
+  try {
+    const response = await apiClient.get(`/users/top-commenters`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching hot topics:', error);
+    throw error;
+  }
+};

@@ -7,7 +7,7 @@ interface ContainerProps {
 
 const Layout: React.FC<ContainerProps> = ({ children }) => {
   return (
-    <section className="">
+    <section>
       <div className="flex flex-col">
         <Navbar />
         {children}

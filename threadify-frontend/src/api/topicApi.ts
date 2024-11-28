@@ -15,3 +15,13 @@ export const getAllTopics = async (
     throw error;
   }
 };
+
+export const getHotTopics = async (): Promise<Topic[]> => {
+  try {
+    const response = await apiClient.get(`/topics/hot`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching hot topics:', error);
+    throw error;
+  }
+};

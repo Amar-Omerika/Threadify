@@ -5,7 +5,7 @@ import React, {
   useState,
   useEffect,
 } from 'react';
-import apiClient from '../api/apiClient';
+import apiClient, { setToken as setApiToken } from '../api/apiClient';
 
 interface StateContextProps {
   token: string;
@@ -27,7 +27,7 @@ export const StateContext: React.FC<{ children: ReactNode }> = ({
   const setToken = (token: string) => {
     setTokenState(token);
     localStorage.setItem('token', token);
-    apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    setApiToken(token); // Set the token in the apiClient
   };
 
   return (

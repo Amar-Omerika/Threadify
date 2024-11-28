@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { validateEmail } from '../helpers/validators';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { register } from '../api/userApi';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Register = () => {
   const [registerInfo, setRegisterInfo] = useState({
@@ -16,6 +19,8 @@ const Register = () => {
     password: '',
   });
 
+  const navigate = useNavigate();
+
   // Generic handler for form fields
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -29,8 +34,8 @@ const Register = () => {
     }));
   };
 
-  const handleSubmit = () => {
-    const { email, password } = registerInfo;
+  const handleSubmit = async () => {
+    const { email, password, firstName, lastName } = registerInfo;
     let valid = true;
     const newErrors = { email: '', password: '' };
 
@@ -59,8 +64,17 @@ const Register = () => {
         avatarUrl: avatarUrl,
       }));
 
-      console.log('Register Info:', registerInfo);
-      // Perform validation or API request here
+      try {
+        const response = await register({
+          ...registerInfo,
+        });
+        toast.success('Registration successful! Redirecting to login...');
+        setTimeout(() => {
+          navigate('/login');
+        }, 3000);
+      } catch (error) {
+        toast.error('Registration failed. Please try again.');
+      }
     }
   };
 
@@ -188,6 +202,7 @@ const Register = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

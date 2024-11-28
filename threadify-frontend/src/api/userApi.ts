@@ -9,3 +9,12 @@ export const register = async (userInfo: UserInfo) => {
     throw error;
   }
 };
+
+export const login = async (email: string, password: string) => {
+  try {
+    const response = await apiClient.post('/users/login', { email, password });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

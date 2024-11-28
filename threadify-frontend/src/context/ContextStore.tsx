@@ -10,6 +10,7 @@ import apiClient, { setToken as setApiToken } from '../api/apiClient';
 interface StateContextProps {
   token: string;
   setToken: (token: string) => void;
+  removeToken: () => void;
 }
 
 const Context = createContext<StateContextProps | undefined>(undefined);
@@ -30,8 +31,15 @@ export const StateContext: React.FC<{ children: ReactNode }> = ({
     setApiToken(token); // Set the token in the apiClient
   };
 
+  const removeToken = () => {
+    setTokenState('');
+    localStorage.removeItem('token', token);
+    setApiToken('');
+  };
   return (
-    <Context.Provider value={{ token, setToken }}>{children}</Context.Provider>
+    <Context.Provider value={{ token, setToken, removeToken }}>
+      {children}
+    </Context.Provider>
   );
 };
 

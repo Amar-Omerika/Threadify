@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { validateEmail } from '../helpers/validators';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { login } from '../api/userApi';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useStateContext } from '../context/ContextStore';
 
 const Login = () => {
   const [loginInfo, setLoginInfo] = useState({
@@ -12,6 +16,9 @@ const Login = () => {
     email: '',
     password: '',
   });
+
+  const navigate = useNavigate();
+  const { setToken } = useStateContext();
 
   // Generic handler for form fields
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,7 +33,7 @@ const Login = () => {
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const { email, password } = loginInfo;
     let valid = true;
     const newErrors = { email: '', password: '' };
@@ -47,8 +54,14 @@ const Login = () => {
     setErrors(newErrors);
 
     if (valid) {
-      console.log('Login Info:', loginInfo);
-      // Perform validation or API request here
+      try {
+        const response = await login(email, password);
+        const { token } = response;
+        setToken(token);
+      } catch (error) {
+        console.error('Login failed:', error);
+        toast.error('Login failed. Please try again.');
+      }
     }
   };
 
@@ -133,7 +146,7 @@ const Login = () => {
               </button>
             </div>
             <p className="text-sm text-center text-gray-400">
-              Don&#x27;t have an account yet?{' '}
+              Don't have an account yet?{' '}
               <Link to={'/register'} className="text-indigo-400">
                 Sign up
               </Link>
@@ -142,6 +155,7 @@ const Login = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

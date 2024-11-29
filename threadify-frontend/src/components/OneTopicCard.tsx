@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import { Topic, Comment } from '../interfaces/TopicInterface';
-import { updateComment, addComment, deleteComment } from '../api/commentApi';
+import {
+  updateComment,
+  addComment,
+  deleteComment,
+  likeComment,
+  disLikeComment,
+} from '../api/commentApi';
 import { likeTopic, disLikeTopic } from '../api/topicApi';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -9,11 +15,14 @@ interface OneTopicCardProps {
   topic: Topic;
   refetchTopic: () => void;
 }
-
+/**
+ * @description OneTopicCard displays a single topic with its comments.
+ * @Improvements In order to reduce amount of fetched data we could optimize this by fetching data only once when user go to topic page,
+ * and handle data with local array of comments and topic. This way we could avoid fetching data every time user adds a comment or likes a topic.
+ */
 const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
   const [showComments, setShowComments] = useState(false);
   const [isLiked, setIsLiked] = useState(topic.isLikedByUser);
-  const [isLikedComment, setIsLikedComment] = useState<boolean>(false);
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editedCommentContent, setEditedCommentContent] = useState<string>('');
   const [showAddComment, setShowAddComment] = useState(false);
@@ -47,12 +56,54 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
     }
   };
 
+  const handleLikeComment = async (id: number) => {
+    try {
+      await likeComment(id);
+      refetchTopic();
+    } catch (error) {
+      toast.error('Updating failed, try again');
+    }
+  };
+
+  const handleDisLikeComment = async (id: number) => {
+    try {
+      await disLikeComment(id);
+      refetchTopic();
+    } catch (error) {
+      toast.error('Updating failed, try again');
+    }
+  };
+
   const handleEditClick = (comment: Comment) => {
     setEditingCommentId(comment.id);
     setEditedCommentContent(comment.content);
   };
 
+  const handleCancelEdit = () => {
+    setEditingCommentId(null);
+    setEditedCommentContent('');
+  };
+
+  const handleSaveClick = async (commentId: number) => {
+    if (!editedCommentContent.trim()) {
+      toast.error('Comment content cannot be empty');
+      return;
+    }
+    try {
+      await updateComment({ id: commentId, content: editedCommentContent });
+      setEditingCommentId(null);
+      toast.success('You successfully updated your comment...');
+      refetchTopic();
+    } catch (error) {
+      toast.error('Updating failed, try again');
+    }
+  };
+
   const handleAddComment = async () => {
+    if (!newCommentContent.trim()) {
+      toast.error('Comment content cannot be empty');
+      return;
+    }
     try {
       await addComment({ id: topic.id, content: newCommentContent });
       setNewCommentContent('');
@@ -74,16 +125,6 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
     }
   };
 
-  const handleSaveClick = async (commentId: number) => {
-    try {
-      await updateComment({ id: commentId, content: editedCommentContent });
-      setEditingCommentId(null);
-      toast.success('You successfully updated your comment...');
-      refetchTopic();
-    } catch (error) {
-      toast.error('Updating failed, try again');
-    }
-  };
   return (
     <div className="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mt-2">
       <div className="flex flex-row">
@@ -152,19 +193,40 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
                 ) : (
                   <div>
                     <p>{comment.content}</p>
-                    <p>Like: {comment?.isLikedByUser ? '❤️' : '🤍'}</p>
+                    <p>
+                      Like:{' '}
+                      {!comment?.isLikedByUser ? (
+                        <button onClick={() => handleLikeComment(comment?.id)}>
+                          🤍
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleDisLikeComment(comment?.id)}
+                        >
+                          ❤️
+                        </button>
+                      )}
+                    </p>
                   </div>
                 )}
               </div>
               {comment?.isAuthoredByUser && (
                 <div>
                   {editingCommentId === comment.id ? (
-                    <button
-                      onClick={() => handleSaveClick(comment.id)}
-                      className="text-blue-600 hover:underline"
-                    >
-                      Save
-                    </button>
+                    <>
+                      <button
+                        onClick={() => handleSaveClick(comment.id)}
+                        className="text-blue-600 hover:underline"
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={handleCancelEdit}
+                        className="text-red-600 hover:underline ml-2"
+                      >
+                        Cancel
+                      </button>
+                    </>
                   ) : (
                     <button
                       onClick={() => handleEditClick(comment)}
@@ -202,7 +264,6 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
               Submit
             </button>
           )}
-
           <button
             onClick={toggleAddComment}
             className="mt-4 text-blue-600 hover:underline ml-2"

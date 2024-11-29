@@ -43,3 +43,27 @@ export const deleteComment = async (id: number): Promise<void> => {
     throw error;
   }
 };
+
+export const likeComment = async (id: number) => {
+  try {
+    const response = await apiClient.post(`/likes/like-comment`, {
+      commentId: id,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error liking comment', error);
+    throw error;
+  }
+};
+
+export const disLikeComment = async (id: number) => {
+  try {
+    const response = await apiClient.post(`/likes/dislike-comment`, {
+      commentId: id,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error disliking comment', error);
+    throw error;
+  }
+};

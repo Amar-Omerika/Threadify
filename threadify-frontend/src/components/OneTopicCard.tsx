@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Topic, Comment } from '../interfaces/TopicInterface';
 import { updateComment, addComment, deleteComment } from '../api/commentApi';
-import { likeTopic } from '../api/topicApi';
+import { likeTopic, disLikeTopic } from '../api/topicApi';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -13,6 +13,7 @@ interface OneTopicCardProps {
 const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
   const [showComments, setShowComments] = useState(false);
   const [isLiked, setIsLiked] = useState(topic.isLikedByUser);
+  const [isLikedComment, setIsLikedComment] = useState<boolean>(false);
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editedCommentContent, setEditedCommentContent] = useState<string>('');
   const [showAddComment, setShowAddComment] = useState(false);
@@ -36,20 +37,19 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
     }
   };
 
-  const handleEditClick = (comment: Comment) => {
-    setEditingCommentId(comment.id);
-    setEditedCommentContent(comment.content);
-  };
-
-  const handleSaveClick = async (commentId: number) => {
+  const handleDisLike = async () => {
+    setIsLiked(!isLiked);
     try {
-      await updateComment({ id: commentId, content: editedCommentContent });
-      setEditingCommentId(null);
-      toast.success('You successfully updated your comment...');
+      await disLikeTopic(topic.id);
       refetchTopic();
     } catch (error) {
       toast.error('Updating failed, try again');
     }
+  };
+
+  const handleEditClick = (comment: Comment) => {
+    setEditingCommentId(comment.id);
+    setEditedCommentContent(comment.content);
   };
 
   const handleAddComment = async () => {
@@ -74,6 +74,16 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
     }
   };
 
+  const handleSaveClick = async (commentId: number) => {
+    try {
+      await updateComment({ id: commentId, content: editedCommentContent });
+      setEditingCommentId(null);
+      toast.success('You successfully updated your comment...');
+      refetchTopic();
+    } catch (error) {
+      toast.error('Updating failed, try again');
+    }
+  };
   return (
     <div className="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mt-2">
       <div className="flex flex-row">
@@ -112,9 +122,15 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
           <div className="text-xs font-bold my-auto">
             Comments: {topic.comments.length}
           </div>
-          <button onClick={handleLike} className="text-xl ml-2">
-            {isLiked ? '❤️' : '🤍'}
-          </button>
+          {!isLiked ? (
+            <button onClick={handleLike} className="text-xl ml-2">
+              🤍
+            </button>
+          ) : (
+            <button onClick={handleDisLike} className="text-xl ml-2">
+              ❤️
+            </button>
+          )}
         </div>
       </div>
       {showComments && (
@@ -134,7 +150,10 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
                     className="border border-gray-300 rounded-md p-1"
                   />
                 ) : (
-                  <p>{comment.content}</p>
+                  <div>
+                    <p>{comment.content}</p>
+                    <p>Like: {comment?.isLikedByUser ? '❤️' : '🤍'}</p>
+                  </div>
                 )}
               </div>
               {comment?.isAuthoredByUser && (

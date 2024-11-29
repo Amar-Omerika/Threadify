@@ -57,3 +57,15 @@ export const disLikeTopic = async (id: number) => {
     throw error;
   }
 };
+
+export const deleteTopic = async (id: number) => {
+  try {
+    const response = await apiClient.delete(`/topics/${id}`, {
+      topicId: id,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error disliking topic', error);
+    throw error;
+  }
+};

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { likeTopic, disLikeTopic } from '../api/topicApi';
+import { likeTopic, disLikeTopic, deleteTopic } from '../api/topicApi';
 import { Topic } from '../interfaces/TopicInterface';
 import { Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
@@ -8,16 +8,24 @@ import DeleteModal from './Modals/DeleteModal';
 
 interface TopicCardProps {
   topic: Topic;
-  refetchTopic: () => void;
+  refetchTopics: () => void;
+  refetchHotTopics: () => void;
 }
-const TopicCard: React.FC<TopicCardProps> = ({ topic, refetchTopic }) => {
+
+const TopicCard: React.FC<TopicCardProps> = ({
+  topic,
+  refetchTopics,
+  refetchHotTopics,
+}) => {
   const [isLiked, setIsLiked] = useState(topic.isLikedByUser);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   const handleLike = async () => {
     setIsLiked(!isLiked);
     try {
       await likeTopic(topic.id);
-      refetchTopic();
+      refetchTopics();
+      refetchHotTopics();
     } catch (error) {
       toast.error('Updating failed, try again');
     }
@@ -27,24 +35,27 @@ const TopicCard: React.FC<TopicCardProps> = ({ topic, refetchTopic }) => {
     setIsLiked(!isLiked);
     try {
       await disLikeTopic(topic.id);
-      refetchTopic();
+      refetchTopics();
+      refetchHotTopics();
     } catch (error) {
       toast.error('Updating failed, try again');
     }
   };
+
   const handleDelete = async () => {
     try {
-      // Call the delete topic API here
-      // await deleteTopic(topic.id);
+      await deleteTopic(topic.id);
       toast.success('Topic deleted successfully');
       setShowDeleteModal(false);
-      refetchTopic();
+      refetchTopics();
+      refetchHotTopics();
     } catch (error) {
       toast.error('Deleting topic failed, try again');
     }
   };
+
   return (
-    <div className="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700  mt-2">
+    <div className="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mt-2">
       <div className="flex flex-row">
         <svg
           className="w-7 h-7 text-gray-500 dark:text-gray-400 mb-3"
@@ -60,7 +71,7 @@ const TopicCard: React.FC<TopicCardProps> = ({ topic, refetchTopic }) => {
           {topic?.isAuthoredByUser && (
             <div>
               <button
-                onClick={() => console.log('test')}
+                onClick={() => console.log('Edit topic')}
                 className="text-blue-600 hover:underline"
               >
                 ✏️

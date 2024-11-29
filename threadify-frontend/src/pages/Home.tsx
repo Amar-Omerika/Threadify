@@ -13,10 +13,12 @@ const Home = () => {
   const [topUsers, setTopUsers] = useState<UserInfo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const fetchAllTopics = async () => {
     try {
-      const allTopics = await getAllTopics();
+      const allTopics = await getAllTopics(1);
       setTopics(allTopics);
     } catch (error) {
       setError('Failed to fetch all topics');
@@ -38,6 +40,25 @@ const Home = () => {
       setTopUsers(topUsers);
     } catch (error) {
       setError('Failed to fetch top users');
+    }
+  };
+
+  const loadMoreTopics = async () => {
+    setLoadingMore(true);
+    try {
+      const moreTopics = await getAllTopics(page + 1);
+      setTopics((prevTopics) => {
+        const newTopics = moreTopics.filter(
+          (newTopic) =>
+            !prevTopics.some((prevTopic) => prevTopic.id === newTopic.id),
+        );
+        return [...prevTopics, ...newTopics];
+      });
+      setPage(page + 1);
+    } catch (error) {
+      setError('Failed to load more topics');
+    } finally {
+      setLoadingMore(false);
     }
   };
 
@@ -120,6 +141,15 @@ const Home = () => {
               />
             </motion.div>
           ))}
+        <div className="flex justify-center mt-4">
+          <button
+            onClick={loadMoreTopics}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            disabled={loadingMore}
+          >
+            {loadingMore ? 'Loading...' : 'Load More'}
+          </button>
+        </div>
       </div>
     </div>
   );

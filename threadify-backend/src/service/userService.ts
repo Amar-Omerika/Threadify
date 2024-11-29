@@ -52,6 +52,44 @@ class UserService extends BaseServiceImpl<PrismaUser> {
     });
     return users;
   }
+
+  async getUserById(userId: number): Promise<PrismaUser | null> {
+    return this.model.findUnique({
+      where: { id: userId },
+    });
+  }
+
+  async updateUser(
+    userId: number,
+    data: Partial<PrismaUser>,
+  ): Promise<PrismaUser | null> {
+    return this.model.update({
+      where: { id: userId },
+      data,
+    });
+  }
+
+  async changePassword(
+    userId: number,
+    newPassword: string,
+  ): Promise<PrismaUser | null> {
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    return this.model.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+  }
+
+  async deleteUser(userId: number): Promise<PrismaUser | null> {
+    // Delete associated topics and comments
+    await this.prisma.topic.deleteMany({ where: { authorId: userId } });
+    await this.prisma.comment.deleteMany({ where: { authorId: userId } });
+
+    // Delete the user
+    return this.model.delete({
+      where: { id: userId },
+    });
+  }
 }
 
 export default new UserService();

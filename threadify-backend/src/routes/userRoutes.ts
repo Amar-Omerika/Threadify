@@ -4,6 +4,23 @@ import { authMiddleware } from '@middleware/authMiddleware';
 
 const router = Router();
 
+router.get('/me', authMiddleware, userController.getUser.bind(userController));
+router.put(
+  '/me',
+  authMiddleware,
+  userController.updateUser.bind(userController),
+);
+router.put(
+  '/me/password',
+  authMiddleware,
+  userController.changePassword.bind(userController),
+);
+router.delete(
+  '/me',
+  authMiddleware,
+  userController.deleteUser.bind(userController),
+);
+
 router.get(
   '/top-commenters',
   userController.getUsersWithMostComments.bind(userController),

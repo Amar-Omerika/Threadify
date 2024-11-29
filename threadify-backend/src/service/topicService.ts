@@ -154,6 +154,38 @@ class TopicService extends BaseServiceImpl<PrismaTopic> {
 
     return topic;
   }
+  async getUserTopics(userId: number): Promise<any[]> {
+    const topics = await this.model.findMany({
+      where: { authorId: userId },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 20,
+      include: {
+        author: {
+          select: {
+            firstName: true,
+            lastName: true,
+          },
+        },
+        likes: true,
+        _count: {
+          select: { comments: true },
+        },
+      },
+    });
+
+    // Check if the user has liked each topic
+    const topicsWithUserLikeStatus = topics.map((topic: any) => ({
+      ...topic,
+      isLikedByUser: topic.likes.some((like: any) => like.userId === userId),
+      isAuthoredByUser: topic.authorId === userId,
+      numberOfComments: topic._count.comments,
+      authorName: `${topic.author.firstName} ${topic.author.lastName}`,
+    }));
+
+    return topicsWithUserLikeStatus;
+  }
 }
 
 export default new TopicService();

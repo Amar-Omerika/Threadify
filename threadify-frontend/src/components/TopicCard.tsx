@@ -104,7 +104,7 @@ const TopicCard: React.FC<TopicCardProps> = ({
           )}
         </div>
       </div>
-      <a href="#">
+      <a>
         <h5 className="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
           {topic?.title || 'Untitled'}
         </h5>

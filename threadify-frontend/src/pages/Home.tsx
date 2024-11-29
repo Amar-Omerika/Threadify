@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import TopicCard from '../components/TopicCard';
 import UserCard from '../components/UserCard';
 import { getAllTopics, getHotTopics } from '../api/topicApi';
 import { getUsersWithTopComments } from '../api/userApi';
 import { Topic } from '../interfaces/TopicInterface';
 import { UserInfo } from '../interfaces/UserInterface';
-import ErrorBoundary from '../components/ErrorBoundary';
 
 const Home = () => {
   const [topics, setTopics] = useState<Topic[]>([]);
@@ -68,47 +68,60 @@ const Home = () => {
   }
 
   return (
-    <ErrorBoundary>
-      <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-3 gap-3 mx-auto mt-4">
-        <div>
-          <p className="text-center text-xl font-medium mb-2">Hot Topics</p>
-          {hotTopics &&
-            hotTopics.map((hotTopic) => (
-              <div key={hotTopic.id}>
-                <TopicCard
-                  topic={hotTopic}
-                  refetchTopics={fetchAllTopics}
-                  refetchHotTopics={fetchHotTopics}
-                />
-              </div>
-            ))}
-        </div>
-        <div>
-          <p className="text-center text-xl font-medium mb-2">
-            Users with most comments
-          </p>
-          {topUsers &&
-            topUsers.map((topUser) => (
-              <div key={topUser.id}>
-                <UserCard user={topUser} />
-              </div>
-            ))}
-        </div>
-        <div>
-          <p className="text-center text-xl font-medium mb-2">All Topics</p>
-          {topics &&
-            topics.map((topic) => (
-              <div key={topic.id}>
-                <TopicCard
-                  topic={topic}
-                  refetchTopics={fetchAllTopics}
-                  refetchHotTopics={fetchHotTopics}
-                />
-              </div>
-            ))}
-        </div>
+    <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-3 gap-3 mx-auto mt-4">
+      <div>
+        <p className="text-center text-xl font-medium mb-2">Hot Topics</p>
+        {hotTopics &&
+          hotTopics.map((hotTopic, index) => (
+            <motion.div
+              key={hotTopic.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <TopicCard
+                topic={hotTopic}
+                refetchTopics={fetchAllTopics}
+                refetchHotTopics={fetchHotTopics}
+              />
+            </motion.div>
+          ))}
       </div>
-    </ErrorBoundary>
+      <div>
+        <p className="text-center text-xl font-medium mb-2">
+          Users with most comments
+        </p>
+        {topUsers &&
+          topUsers.map((topUser, index) => (
+            <motion.div
+              key={topUser.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <UserCard user={topUser} />
+            </motion.div>
+          ))}
+      </div>
+      <div>
+        <p className="text-center text-xl font-medium mb-2">All Topics</p>
+        {topics &&
+          topics.map((topic, index) => (
+            <motion.div
+              key={topic.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <TopicCard
+                topic={topic}
+                refetchTopics={fetchAllTopics}
+                refetchHotTopics={fetchHotTopics}
+              />
+            </motion.div>
+          ))}
+      </div>
+    </div>
   );
 };
 

@@ -82,3 +82,13 @@ export const updateTopic = async (
     throw error;
   }
 };
+
+export const getUserTopics = async (): Promise<Topic[]> => {
+  try {
+    const response = await apiClient.get(`/topics//user/topics`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching hot topics:', error);
+    throw error;
+  }
+};

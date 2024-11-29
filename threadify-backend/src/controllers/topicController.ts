@@ -78,7 +78,7 @@ class TopicController extends BaseController<PrismaTopic, typeof TopicService> {
 
   async getOne(req: Request, res: Response): Promise<void> {
     try {
-      const userId = (req as any).userId; // Type assertion to access userId
+      const userId = (req as any).userId;
       const topic = await this.service.getTopicWithComments(
         Number(req.params.id),
         userId,
@@ -88,6 +88,16 @@ class TopicController extends BaseController<PrismaTopic, typeof TopicService> {
       } else {
         res.status(200).json(topic);
       }
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  async getUserTopics(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = (req as any).userId;
+      const topics = await this.service.getUserTopics(userId);
+      res.status(200).json(topics);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }

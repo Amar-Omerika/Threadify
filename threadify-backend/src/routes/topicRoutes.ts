@@ -19,6 +19,11 @@ router.get(
   authMiddleware,
   topicController.getOne.bind(topicController),
 );
+router.get(
+  '/user/topics',
+  authMiddleware,
+  topicController.getUserTopics.bind(topicController),
+);
 router.post('/', authMiddleware, topicController.create.bind(topicController));
 router.put(
   '/:id',

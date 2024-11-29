@@ -139,7 +139,7 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
         </svg>
         <h5 className="font-medium ml-2">Author: {topic.authorName}</h5>
       </div>
-      <a href="#">
+      <a>
         <h5 className="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
           {topic.title}
         </h5>

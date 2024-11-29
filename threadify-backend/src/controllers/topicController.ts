@@ -11,7 +11,7 @@ class TopicController extends BaseController<PrismaTopic, typeof TopicService> {
   async create(req: Request, res: Response): Promise<void> {
     try {
       const { title, description } = req.body;
-      const authorId = (req as any).userId; // Type assertion to access userId
+      const authorId = (req as any).userId;
       const newTopic = await this.service.createTopic({
         title,
         description,

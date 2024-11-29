@@ -5,7 +5,6 @@ import { getAllTopics, getHotTopics } from '../api/topicApi';
 import { getUsersWithTopComments } from '../api/userApi';
 import { Topic } from '../interfaces/TopicInterface';
 import { UserInfo } from '../interfaces/UserInterface';
-import ErrorBoundary from '../components/ErrorBoundary';
 
 const Home = () => {
   const [topics, setTopics] = useState<Topic[]>([]);
@@ -14,17 +13,32 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchTopics = async () => {
+    try {
+      const [allTopics, hotTopics] = await Promise.all([
+        getAllTopics(),
+        getHotTopics(),
+      ]);
+      setTopics(allTopics);
+      setHotTopics(hotTopics);
+    } catch (error) {
+      setError('Failed to fetch topics');
+    }
+  };
+
+  const fetchTopUsers = async () => {
+    try {
+      const topUsers = await getUsersWithTopComments();
+      setTopUsers(topUsers);
+    } catch (error) {
+      setError('Failed to fetch top users');
+    }
+  };
+
   useEffect(() => {
     const fetchApis = async () => {
       try {
-        const [allTopics, hotTopics, topUsers] = await Promise.all([
-          getAllTopics(),
-          getHotTopics(),
-          getUsersWithTopComments(),
-        ]);
-        setTopics(allTopics);
-        setHotTopics(hotTopics);
-        setTopUsers(topUsers);
+        await Promise.all([fetchTopics(), fetchTopUsers()]);
       } catch (error) {
         setError('Failed to fetch data');
       } finally {
@@ -44,39 +58,37 @@ const Home = () => {
   }
 
   return (
-    <ErrorBoundary>
-      <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-3 gap-3 mx-auto mt-4">
-        <div>
-          <p className="text-center text-xl font-medium mb-2">Hot Topics</p>
-          {hotTopics &&
-            hotTopics.map((hotTopic) => (
-              <div key={hotTopic.id}>
-                <TopicCard topic={hotTopic} />
-              </div>
-            ))}
-        </div>
-        <div>
-          <p className="text-center text-xl font-medium mb-2">
-            Users with most comments
-          </p>
-          {topUsers &&
-            topUsers.map((topUser) => (
-              <div key={topUser.id}>
-                <UserCard user={topUser} />
-              </div>
-            ))}
-        </div>
-        <div>
-          <p className="text-center text-xl font-medium mb-2">All topics</p>
-          {topics &&
-            topics.map((topic) => (
-              <div key={topic.id}>
-                <TopicCard topic={topic} />
-              </div>
-            ))}
-        </div>
+    <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-3 gap-3 mx-auto mt-4">
+      <div>
+        <p className="text-center text-xl font-medium mb-2">Hot Topics</p>
+        {hotTopics &&
+          hotTopics.map((hotTopic) => (
+            <div key={hotTopic.id}>
+              <TopicCard topic={hotTopic} refetchTopic={fetchTopics} />
+            </div>
+          ))}
       </div>
-    </ErrorBoundary>
+      <div>
+        <p className="text-center text-xl font-medium mb-2">
+          Users with most comments
+        </p>
+        {topUsers &&
+          topUsers.map((topUser) => (
+            <div key={topUser.id}>
+              <UserCard user={topUser} />
+            </div>
+          ))}
+      </div>
+      <div>
+        <p className="text-center text-xl font-medium mb-2">All Topics</p>
+        {topics &&
+          topics.map((topic) => (
+            <div key={topic.id}>
+              <TopicCard topic={topic} refetchTopic={fetchTopics} />
+            </div>
+          ))}
+      </div>
+    </div>
   );
 };
 

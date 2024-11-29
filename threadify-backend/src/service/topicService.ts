@@ -57,10 +57,11 @@ class TopicService extends BaseServiceImpl<PrismaTopic> {
       },
     });
 
-    // Check if the user has liked each topic and include the number of comments
+    // Check if the user has liked each topic and if the user posted the topic
     const topicsWithUserLikeStatus = topics.map((topic: any) => ({
       ...topic,
       isLikedByUser: topic.likes.some((like: any) => like.userId === userId),
+      isAuthoredByUser: topic.authorId === userId,
       numberOfComments: topic._count.comments,
       authorName: `${topic.author.firstName} ${topic.author.lastName}`,
     }));
@@ -90,9 +91,11 @@ class TopicService extends BaseServiceImpl<PrismaTopic> {
       take: 5,
     });
 
+    // Check if the user has liked each topic and if the user posted the topic
     const topicsWithUserLikeStatus = topics.map((topic: any) => ({
       ...topic,
       isLikedByUser: topic.likes.some((like: any) => like.userId === userId),
+      isAuthoredByUser: topic.authorId === userId,
       numberOfComments: topic._count.comments,
       authorName: `${topic.author.firstName} ${topic.author.lastName}`,
     }));

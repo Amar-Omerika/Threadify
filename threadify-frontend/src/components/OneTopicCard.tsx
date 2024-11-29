@@ -158,7 +158,6 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
         ) : (
           <p>No comments yet</p>
         )}
-
         <div className="flex flex-row">
           <div className="text-xs font-bold my-auto">
             Comments: {topic.comments.length}
@@ -175,7 +174,7 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
         </div>
       </div>
       {showComments && (
-        <div className="mt-4">
+        <div className="mt-4 max-h-[200px] overflow-y-auto">
           {topic.comments.map((comment) => (
             <div
               key={comment.id}
@@ -184,12 +183,28 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
               <div>
                 <p className="font-semibold">{comment.authorName}</p>
                 {editingCommentId === comment.id ? (
-                  <input
-                    type="text"
-                    value={editedCommentContent}
-                    onChange={(e) => setEditedCommentContent(e.target.value)}
-                    className="border border-gray-300 rounded-md p-1"
-                  />
+                  <div>
+                    <input
+                      type="text"
+                      value={editedCommentContent}
+                      onChange={(e) => setEditedCommentContent(e.target.value)}
+                      className="border border-gray-300 rounded-md p-1"
+                    />
+                    <div>
+                      <button
+                        onClick={() => handleSaveClick(comment.id)}
+                        className="text-blue-600 hover:underline"
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={handleCancelEdit}
+                        className="text-red-600 hover:underline ml-2"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
                 ) : (
                   <div>
                     <p>{comment.content}</p>
@@ -212,22 +227,7 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
               </div>
               {comment?.isAuthoredByUser && (
                 <div>
-                  {editingCommentId === comment.id ? (
-                    <>
-                      <button
-                        onClick={() => handleSaveClick(comment.id)}
-                        className="text-blue-600 hover:underline"
-                      >
-                        Save
-                      </button>
-                      <button
-                        onClick={handleCancelEdit}
-                        className="text-red-600 hover:underline ml-2"
-                      >
-                        Cancel
-                      </button>
-                    </>
-                  ) : (
+                  {editingCommentId !== comment.id && (
                     <button
                       onClick={() => handleEditClick(comment)}
                       className="text-blue-600 hover:underline"
@@ -245,33 +245,24 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
               )}
             </div>
           ))}
-          {showAddComment && (
-            <div className="mt-2">
-              <input
-                type="text"
-                value={newCommentContent}
-                onChange={(e) => setNewCommentContent(e.target.value)}
-                className="border border-gray-300 rounded-md p-1 w-full"
-                placeholder="Write your comment..."
-              />
-            </div>
-          )}
-          {showAddComment && (
-            <button
-              onClick={handleAddComment}
-              className="mt-2 text-blue-600 hover:underline"
-            >
-              Submit
-            </button>
-          )}
-          <button
-            onClick={toggleAddComment}
-            className="mt-4 text-blue-600 hover:underline ml-2"
-          >
-            {showAddComment ? 'Cancel' : 'Add Comment'}
-          </button>
         </div>
       )}
+      <div className="mt-4">
+        <h3 className="text-lg font-medium">Add a Comment</h3>
+        <input
+          type="text"
+          value={newCommentContent}
+          onChange={(e) => setNewCommentContent(e.target.value)}
+          className="border border-gray-300 rounded-md p-1 w-full mt-2"
+          placeholder="Write your comment..."
+        />
+        <button
+          onClick={handleAddComment}
+          className="mt-2 text-blue-600 hover:underline"
+        >
+          Submit
+        </button>
+      </div>
       <ToastContainer />
     </div>
   );

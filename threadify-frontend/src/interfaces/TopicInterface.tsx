@@ -26,6 +26,7 @@ export interface Comment {
   _count: Count;
   likes: Like[];
   isLikedByUser: boolean;
+  isAuthoredByUser: boolean;
   authorName: string;
 }
 

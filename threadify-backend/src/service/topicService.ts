@@ -143,6 +143,7 @@ class TopicService extends BaseServiceImpl<PrismaTopic> {
           isLikedByUser: comment.likes.some(
             (like: any) => like.userId === userId,
           ),
+          isAuthoredByUser: comment.authorId === userId,
           authorName: `${comment.author.firstName} ${comment.author.lastName}`,
         })),
       };

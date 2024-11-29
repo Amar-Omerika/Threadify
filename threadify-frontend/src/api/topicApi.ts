@@ -38,7 +38,7 @@ export const getOneTopic = async (id: number): Promise<Topic[]> => {
 
 export const likeTopic = async (id?: number) => {
   try {
-    const response = await apiClient.post(`likes/like-topic`, { id });
+    const response = await apiClient.post(`/likes/like-topic`, { id });
     return response.data;
   } catch (error) {
     console.error('Error liking topic', error);

@@ -10,18 +10,18 @@ const Topic = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchTopic = async () => {
-      try {
-        const data = await getOneTopic(Number(id));
-        setTopic(data);
-      } catch (error) {
-        setError('Failed to fetch topic');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchTopic = async () => {
+    try {
+      const data = await getOneTopic(Number(id));
+      setTopic(data);
+    } catch (error) {
+      setError('Failed to fetch topic');
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchTopic();
   }, [id]);
 
@@ -38,7 +38,7 @@ const Topic = () => {
       {topic && (
         <div className="flex flex-col justify-center items-center mt-4">
           <h1 className="font-bold text-2xl">Current Topic</h1>
-          <OneTopicCard topic={topic} />
+          <OneTopicCard topic={topic} refetchTopic={fetchTopic} />
         </div>
       )}
     </div>

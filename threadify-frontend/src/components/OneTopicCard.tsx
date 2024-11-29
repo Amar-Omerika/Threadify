@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import { Topic, Comment } from '../interfaces/TopicInterface';
+import { updateComment } from '../api/commentApi';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface OneTopicCardProps {
   topic: Topic;
+  refetchTopic: () => void;
 }
 
-const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic }) => {
+const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
   const [showComments, setShowComments] = useState(false);
   const [isLiked, setIsLiked] = useState(topic.isLikedByUser);
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
@@ -17,16 +21,24 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic }) => {
 
   const handleLike = () => {
     setIsLiked(!isLiked);
+    // You can also make an API call to update the like status on the server
   };
 
+  const handleAddComment = () => {};
   const handleEditClick = (comment: Comment) => {
     setEditingCommentId(comment.id);
     setEditedCommentContent(comment.content);
   };
 
-  const handleSaveClick = (commentId: number) => {
-    console.log(`Saving comment ${commentId}: ${editedCommentContent}`);
-    setEditingCommentId(null);
+  const handleSaveClick = async (commentId: number) => {
+    try {
+      await updateComment({ id: commentId, content: editedCommentContent });
+      setEditingCommentId(null);
+      toast.success('You successfully updated your comment...');
+      refetchTopic();
+    } catch (error) {
+      toast.error('Updating failed, try again');
+    }
   };
 
   return (
@@ -77,7 +89,7 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic }) => {
           {topic.comments.map((comment) => (
             <div
               key={comment.id}
-              className="mb-2 flex flex-row justify-between"
+              className="mb-2 flex flex-row justify-between border-t-2"
             >
               <div>
                 <p className="font-semibold">{comment.authorName}</p>
@@ -92,19 +104,19 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic }) => {
                   <p>{comment.content}</p>
                 )}
               </div>
-              {topic?.authorId === comment.authorId && (
+              {comment?.isAuthoredByUser && (
                 <div>
                   {editingCommentId === comment.id ? (
                     <button
                       onClick={() => handleSaveClick(comment.id)}
-                      className="text-white bg-blue-600 p-1 rounded-md"
+                      className="text-blue-600 hover:underline"
                     >
                       Save
                     </button>
                   ) : (
                     <button
                       onClick={() => handleEditClick(comment)}
-                      className="text-blue-600"
+                      className="text-blue-600 hover:underline"
                     >
                       ✏️
                     </button>
@@ -115,6 +127,7 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic }) => {
           ))}
         </div>
       )}
+      <ToastContainer />
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Topic, Comment } from '../interfaces/TopicInterface';
 import { updateComment, addComment, deleteComment } from '../api/commentApi';
+import { likeTopic } from '../api/topicApi';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -25,9 +26,14 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
     setShowAddComment(!showAddComment);
   };
 
-  const handleLike = () => {
+  const handleLike = async () => {
     setIsLiked(!isLiked);
-    // You can also make an API call to update the like status on the server
+    try {
+      await likeTopic(topic.id);
+      refetchTopic();
+    } catch (error) {
+      toast.error('Updating failed, try again');
+    }
   };
 
   const handleEditClick = (comment: Comment) => {
@@ -107,7 +113,7 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
             Comments: {topic.comments.length}
           </div>
           <button onClick={handleLike} className="text-xl ml-2">
-            {isLiked ? '👍' : '👎'}
+            {isLiked ? '❤️' : '🤍'}
           </button>
         </div>
       </div>

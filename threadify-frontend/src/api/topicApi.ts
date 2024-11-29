@@ -69,3 +69,16 @@ export const deleteTopic = async (id: number) => {
     throw error;
   }
 };
+
+export const updateTopic = async (
+  id: number,
+  data: { title: string; description: string },
+) => {
+  try {
+    const response = await apiClient.put(`/topics/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating topic', error);
+    throw error;
+  }
+};

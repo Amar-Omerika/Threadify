@@ -1,10 +1,16 @@
 import { useState } from 'react';
-import { likeTopic, disLikeTopic, deleteTopic } from '../api/topicApi';
+import {
+  likeTopic,
+  disLikeTopic,
+  deleteTopic,
+  updateTopic,
+} from '../api/topicApi';
 import { Topic } from '../interfaces/TopicInterface';
 import { Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import DeleteModal from './Modals/DeleteModal';
+import EditTopicModal from './Modals/EditTopicModal';
 
 interface TopicCardProps {
   topic: Topic;
@@ -19,6 +25,7 @@ const TopicCard: React.FC<TopicCardProps> = ({
 }) => {
   const [isLiked, setIsLiked] = useState(topic.isLikedByUser);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const handleLike = async () => {
     setIsLiked(!isLiked);
@@ -54,6 +61,17 @@ const TopicCard: React.FC<TopicCardProps> = ({
     }
   };
 
+  const handleSaveTopic = async (title: string, description: string) => {
+    try {
+      await updateTopic(topic.id, { title, description });
+      // toast.success('You successfully updated the topic...');
+      refetchTopics();
+      refetchHotTopics();
+    } catch (error) {
+      toast.error('Updating topic failed, try again');
+    }
+  };
+
   return (
     <div className="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mt-2">
       <div className="flex flex-row">
@@ -71,7 +89,7 @@ const TopicCard: React.FC<TopicCardProps> = ({
           {topic?.isAuthoredByUser && (
             <div>
               <button
-                onClick={() => console.log('Edit topic')}
+                onClick={() => setShowEditModal(true)}
                 className="text-blue-600 hover:underline"
               >
                 ✏️
@@ -88,7 +106,7 @@ const TopicCard: React.FC<TopicCardProps> = ({
       </div>
       <a href="#">
         <h5 className="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
-          {topic?.title}
+          {topic?.title || 'Untitled'}
         </h5>
       </a>
       <p className="mb-3 font-normal text-gray-500 dark:text-gray-400">
@@ -135,6 +153,13 @@ const TopicCard: React.FC<TopicCardProps> = ({
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
         onDelete={handleDelete}
+      />
+      <EditTopicModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        onSave={handleSaveTopic}
+        initialTitle={topic.title}
+        initialDescription={topic.description}
       />
       <ToastContainer />
     </div>

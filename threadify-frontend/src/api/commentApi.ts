@@ -34,3 +34,12 @@ export const updateComment = async (
     throw error;
   }
 };
+
+export const deleteComment = async (id: number): Promise<void> => {
+  try {
+    await apiClient.delete(`/comments/${id}`);
+  } catch (error) {
+    console.error('Error deleting comment', error);
+    throw error;
+  }
+};

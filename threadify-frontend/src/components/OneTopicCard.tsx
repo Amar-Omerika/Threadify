@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Topic, Comment } from '../interfaces/TopicInterface';
-import { updateComment } from '../api/commentApi';
+import { updateComment, addComment, deleteComment } from '../api/commentApi';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -14,9 +14,15 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
   const [isLiked, setIsLiked] = useState(topic.isLikedByUser);
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editedCommentContent, setEditedCommentContent] = useState<string>('');
+  const [showAddComment, setShowAddComment] = useState(false);
+  const [newCommentContent, setNewCommentContent] = useState<string>('');
 
   const toggleComments = () => {
     setShowComments(!showComments);
+  };
+
+  const toggleAddComment = () => {
+    setShowAddComment(!showAddComment);
   };
 
   const handleLike = () => {
@@ -24,7 +30,6 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
     // You can also make an API call to update the like status on the server
   };
 
-  const handleAddComment = () => {};
   const handleEditClick = (comment: Comment) => {
     setEditingCommentId(comment.id);
     setEditedCommentContent(comment.content);
@@ -38,6 +43,28 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
       refetchTopic();
     } catch (error) {
       toast.error('Updating failed, try again');
+    }
+  };
+
+  const handleAddComment = async () => {
+    try {
+      await addComment({ id: topic.id, content: newCommentContent });
+      setNewCommentContent('');
+      setShowAddComment(false);
+      toast.success('You successfully added a new comment...');
+      refetchTopic();
+    } catch (error) {
+      toast.error('Adding comment failed, try again');
+    }
+  };
+
+  const handleDeleteComment = async (commentId: number) => {
+    try {
+      await deleteComment(commentId);
+      toast.success('You successfully deleted a comment...');
+      refetchTopic();
+    } catch (error) {
+      toast.error('Deleting comment failed, try again');
     }
   };
 
@@ -89,7 +116,7 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
           {topic.comments.map((comment) => (
             <div
               key={comment.id}
-              className="mb-2 flex flex-row justify-between border-t-2"
+              className="mb-2 flex flex-row justify-between"
             >
               <div>
                 <p className="font-semibold">{comment.authorName}</p>
@@ -121,10 +148,42 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
                       ✏️
                     </button>
                   )}
+                  <button
+                    onClick={() => handleDeleteComment(comment.id)}
+                    className="text-blue-600 hover:underline"
+                  >
+                    🗑️
+                  </button>
                 </div>
               )}
             </div>
           ))}
+          {showAddComment && (
+            <div className="mt-2">
+              <input
+                type="text"
+                value={newCommentContent}
+                onChange={(e) => setNewCommentContent(e.target.value)}
+                className="border border-gray-300 rounded-md p-1 w-full"
+                placeholder="Write your comment..."
+              />
+            </div>
+          )}
+          {showAddComment && (
+            <button
+              onClick={handleAddComment}
+              className="mt-2 text-blue-600 hover:underline"
+            >
+              Submit
+            </button>
+          )}
+
+          <button
+            onClick={toggleAddComment}
+            className="mt-4 text-blue-600 hover:underline ml-2"
+          >
+            {showAddComment ? 'Cancel' : 'Add Comment'}
+          </button>
         </div>
       )}
       <ToastContainer />

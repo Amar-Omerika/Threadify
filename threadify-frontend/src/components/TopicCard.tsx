@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { likeTopic, disLikeTopic } from '../api/topicApi';
 import { Topic } from '../interfaces/TopicInterface';
 import { Link } from 'react-router-dom';
 
@@ -5,6 +7,27 @@ interface TopicCardProps {
   topic: Topic;
 }
 const TopicCard: React.FC<TopicCardProps> = ({ topic }) => {
+  const [isLiked, setIsLiked] = useState(topic.isLikedByUser);
+  const handleLike = async () => {
+    setIsLiked(!isLiked);
+    try {
+      await likeTopic(topic.id);
+      refetchTopic();
+    } catch (error) {
+      toast.error('Updating failed, try again');
+    }
+  };
+
+  const handleDisLike = async () => {
+    setIsLiked(!isLiked);
+    try {
+      await disLikeTopic(topic.id);
+      refetchTopic();
+    } catch (error) {
+      toast.error('Updating failed, try again');
+    }
+  };
+
   return (
     <div className="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700  mt-2">
       <div className="flex flex-row">
@@ -53,8 +76,15 @@ const TopicCard: React.FC<TopicCardProps> = ({ topic }) => {
           <div className="text-xs font-bold my-auto">
             Comments: {topic?._count.comments}
           </div>
-          <div className="text-xl">👎</div>
-          {/* <div className="text-xl">👍</div> */}
+          {!isLiked ? (
+            <button onClick={handleLike} className="text-xl ml-2">
+              🤍
+            </button>
+          ) : (
+            <button onClick={handleDisLike} className="text-xl ml-2">
+              ❤️
+            </button>
+          )}
         </div>
       </div>
     </div>

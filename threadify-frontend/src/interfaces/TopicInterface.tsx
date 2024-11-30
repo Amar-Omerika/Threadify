@@ -1,6 +1,7 @@
 export interface Author {
   firstName: string;
   lastName: string;
+  avatarUrl: string;
 }
 
 export interface Like {
@@ -42,4 +43,6 @@ export interface Topic {
   likes: Like[];
   isLikedByUser: boolean;
   authorName: string;
+  isAuthoredByUser: boolean;
+  _count: any;
 }

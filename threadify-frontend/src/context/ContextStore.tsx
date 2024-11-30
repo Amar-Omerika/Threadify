@@ -5,7 +5,7 @@ import React, {
   useState,
   useEffect,
 } from 'react';
-import apiClient, { setToken as setApiToken } from '../api/apiClient';
+import { setToken as setApiToken } from '../api/apiClient';
 
 interface StateContextProps {
   token: string;
@@ -33,7 +33,7 @@ export const StateContext: React.FC<{ children: ReactNode }> = ({
 
   const removeToken = () => {
     setTokenState('');
-    localStorage.removeItem('token', token);
+    localStorage.removeItem('token');
     setApiToken('');
   };
   return (

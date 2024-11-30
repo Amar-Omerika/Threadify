@@ -52,7 +52,6 @@ const TopicCard: React.FC<TopicCardProps> = ({
   const handleDelete = async () => {
     try {
       await deleteTopic(topic.id);
-      toast.success('Topic deleted successfully');
       setShowDeleteModal(false);
       refetchTopics();
       refetchHotTopics();

@@ -25,6 +25,10 @@ class TopicService extends BaseServiceImpl<PrismaTopic> {
   }
 
   async deleteTopic(id: number): Promise<PrismaTopic | null> {
+    await this.prisma.like.deleteMany({ where: { topicId: id } });
+
+    await this.prisma.comment.deleteMany({ where: { topicId: id } });
+
     const deletedTopic = await this.model.delete({
       where: { id },
     });
@@ -48,6 +52,7 @@ class TopicService extends BaseServiceImpl<PrismaTopic> {
           select: {
             firstName: true,
             lastName: true,
+            avatarUrl: true,
           },
         },
         likes: true,
@@ -76,6 +81,7 @@ class TopicService extends BaseServiceImpl<PrismaTopic> {
           select: {
             firstName: true,
             lastName: true,
+            avatarUrl: true,
           },
         },
         _count: {
@@ -91,7 +97,6 @@ class TopicService extends BaseServiceImpl<PrismaTopic> {
       take: 5,
     });
 
-    // Check if the user has liked each topic and if the user posted the topic
     const topicsWithUserLikeStatus = topics.map((topic: any) => ({
       ...topic,
       isLikedByUser: topic.likes.some((like: any) => like.userId === userId),
@@ -111,6 +116,7 @@ class TopicService extends BaseServiceImpl<PrismaTopic> {
           select: {
             firstName: true,
             lastName: true,
+            avatarUrl: true,
           },
         },
         comments: {
@@ -166,6 +172,7 @@ class TopicService extends BaseServiceImpl<PrismaTopic> {
           select: {
             firstName: true,
             lastName: true,
+            avatarUrl: true,
           },
         },
         likes: true,
@@ -175,7 +182,6 @@ class TopicService extends BaseServiceImpl<PrismaTopic> {
       },
     });
 
-    // Check if the user has liked each topic
     const topicsWithUserLikeStatus = topics.map((topic: any) => ({
       ...topic,
       isLikedByUser: topic.likes.some((like: any) => like.userId === userId),

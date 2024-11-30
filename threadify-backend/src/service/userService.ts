@@ -84,9 +84,14 @@ class UserService extends BaseServiceImpl<PrismaUser> {
   }
 
   async deleteUser(userId: number): Promise<PrismaUser | null> {
-    // Delete associated topics and comments
-    await this.prisma.topic.deleteMany({ where: { authorId: userId } });
+    // Delete associated likes
+    await this.prisma.like.deleteMany({ where: { userId } });
+
+    // Delete associated comments
     await this.prisma.comment.deleteMany({ where: { authorId: userId } });
+
+    // Delete associated topics
+    await this.prisma.topic.deleteMany({ where: { authorId: userId } });
 
     // Delete the user
     return this.model.delete({

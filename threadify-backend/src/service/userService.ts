@@ -10,10 +10,12 @@ class UserService extends BaseServiceImpl<PrismaUser> {
 
   async register(data: Partial<PrismaUser>): Promise<PrismaUser> {
     const hashedPassword = await bcrypt.hash(data.password!, 10);
+    const avatarUrl = this.generateAvatarUrl(data.email!);
     const newUser = await this.model.create({
       data: {
         ...data,
         password: hashedPassword,
+        avatarUrl,
       },
     });
     return newUser;
@@ -36,6 +38,7 @@ class UserService extends BaseServiceImpl<PrismaUser> {
 
     return token;
   }
+
   async getUsersWithMostComments(): Promise<PrismaUser[]> {
     const users = await this.prisma.user.findMany({
       include: {
@@ -89,6 +92,10 @@ class UserService extends BaseServiceImpl<PrismaUser> {
     return this.model.delete({
       where: { id: userId },
     });
+  }
+
+  private generateAvatarUrl(email: string): string {
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(email)}&background=random&size=128`;
   }
 }
 

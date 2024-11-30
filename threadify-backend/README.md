@@ -47,6 +47,12 @@ To start the development server with hot-reloading, run:
 npm start
 ```
 
+### Link for generating avatars for user profile
+
+```sh
+https://ui-avatars.com/
+```
+
 ### Project Structure
 
 To start the development server with hot-reloading, run:

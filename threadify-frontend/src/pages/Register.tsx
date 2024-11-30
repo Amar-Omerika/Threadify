@@ -12,7 +12,6 @@ const Register = () => {
     lastName: '',
     email: '',
     password: '',
-    avatarUrl: '',
   });
   const [errors, setErrors] = useState({
     email: '',
@@ -55,13 +54,8 @@ const Register = () => {
     setErrors(newErrors);
 
     if (valid) {
-      // Use a free API to set a user profile image
-      const avatarUrl = `https://api.multiavatar.com/${encodeURIComponent(
-        email,
-      )}.svg`;
       setRegisterInfo((prevState) => ({
         ...prevState,
-        avatarUrl: avatarUrl,
       }));
 
       try {

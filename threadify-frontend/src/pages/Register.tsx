@@ -34,7 +34,7 @@ const Register = () => {
   };
 
   const handleSubmit = async () => {
-    const { email, password, firstName, lastName } = registerInfo;
+    const { email, password } = registerInfo;
     let valid = true;
     const newErrors = { email: '', password: '' };
 
@@ -59,7 +59,7 @@ const Register = () => {
       }));
 
       try {
-        const response = await register({
+        await register({
           ...registerInfo,
         });
         toast.success('Registration successful! Redirecting to login...');

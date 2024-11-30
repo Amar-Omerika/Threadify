@@ -17,7 +17,6 @@ const UserProfile = () => {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [emailError, setEmailError] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);

@@ -2,11 +2,10 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import OneTopicCard from '../components/OneTopicCard';
 import { getOneTopic } from '../api/topicApi';
-import { Topic as TopicInterface } from '../interfaces/TopicInterface';
 
 const Topic = () => {
   const { id } = useParams<{ id: string }>();
-  const [topic, setTopic] = useState<TopicInterface | null>(null);
+  const [topic, setTopic] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

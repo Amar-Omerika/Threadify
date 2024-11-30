@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { validateEmail } from '../helpers/validators';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { login } from '../api/userApi';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -17,7 +17,6 @@ const Login = () => {
     password: '',
   });
 
-  const navigate = useNavigate();
   const { setToken } = useStateContext();
 
   // Generic handler for form fields

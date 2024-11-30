@@ -26,15 +26,11 @@ const OneTopicCard: React.FC<OneTopicCardProps> = ({ topic, refetchTopic }) => {
   const [isLiked, setIsLiked] = useState(topic.isLikedByUser);
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editedCommentContent, setEditedCommentContent] = useState<string>('');
-  const [showAddComment, setShowAddComment] = useState(false);
+  const [_, setShowAddComment] = useState(false);
   const [newCommentContent, setNewCommentContent] = useState<string>('');
 
   const toggleComments = () => {
     setShowComments(!showComments);
-  };
-
-  const toggleAddComment = () => {
-    setShowAddComment(!showAddComment);
   };
 
   const handleLike = async () => {

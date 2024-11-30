@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import TopicCard from '../components/TopicCard';
 import { getUserTopics } from '../api/topicApi';
 import { Topic } from '../interfaces/TopicInterface';
-import ErrorBoundary from '../components/ErrorBoundary';
 
 const MyTopics = () => {
   const [topics, setTopics] = useState<Topic[]>([]);

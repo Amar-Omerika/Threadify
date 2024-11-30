@@ -1,7 +1,5 @@
-import { User } from '../interfaces/UserInterface';
-
 interface UserCardProps {
-  user: User;
+  user: any;
 }
 const UserCard: React.FC<UserCardProps> = ({ user }) => {
   return (

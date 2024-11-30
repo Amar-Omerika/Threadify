@@ -11,6 +11,7 @@ import { UserInfo } from '../interfaces/UserInterface';
 import { validateEmail } from '../helpers/validators';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import CreateTopicModal from '../components/Modals/CreateTopicModal';
 
 const UserProfile = () => {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
@@ -19,6 +20,7 @@ const UserProfile = () => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const { removeToken } = useStateContext();
   const navigate = useNavigate();
 
@@ -76,6 +78,14 @@ const UserProfile = () => {
     } catch (error) {
       toast.error('Failed to delete account');
     }
+  };
+
+  const handleCreateTopic = () => {
+    setShowCreateModal(true);
+  };
+
+  const handleCreateTopicSuccess = () => {
+    // Optionally refetch topics or perform other actions after creating a topic
   };
 
   if (loading) {
@@ -170,6 +180,20 @@ const UserProfile = () => {
           Delete Account
         </button>
       </div>
+      <div className="mt-6">
+        <h3 className="text-lg font-medium">Create Topic</h3>
+        <button
+          onClick={handleCreateTopic}
+          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+        >
+          Create Topic
+        </button>
+      </div>
+      <CreateTopicModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onCreate={handleCreateTopicSuccess}
+      />
       <ToastContainer />
     </div>
   );

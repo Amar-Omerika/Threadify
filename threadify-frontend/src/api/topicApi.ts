@@ -83,6 +83,19 @@ export const updateTopic = async (
   }
 };
 
+export const createTopic = async (data: {
+  title: string;
+  description: string;
+}): Promise<Topic> => {
+  try {
+    const response = await apiClient.post('/topics', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating topic', error);
+    throw error;
+  }
+};
+
 export const getUserTopics = async (): Promise<Topic[]> => {
   try {
     const response = await apiClient.get(`/topics//user/topics`);
